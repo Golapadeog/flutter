@@ -53,11 +53,13 @@ class _TextSelectionToolbar extends StatelessWidget {
       return Container(width: 0.0, height: 0.0);
     }
 
+    final List<Widget> flexibleItems = items.map((Widget widget) => Flexible(child: FittedBox(child: widget))).toList();
+
     return Material(
       elevation: 1.0,
       child: Container(
         height: _kToolbarHeight,
-        child: Row(mainAxisSize: MainAxisSize.min, children: items),
+        child: Row(mainAxisSize: MainAxisSize.min, children: flexibleItems),
       ),
     );
   }
@@ -93,13 +95,11 @@ class _TextSelectionToolbarLayout extends SingleChildLayoutDelegate {
 
     if (x < _kToolbarScreenPadding)
       x = _kToolbarScreenPadding;
-    else if (x + childSize.width > screenSize.width - _kToolbarScreenPadding)
-      x = screenSize.width - childSize.width - _kToolbarScreenPadding;
+    else if (x + childSize.width > screenSize.width - _kToolbarScreenPadding) x = screenSize.width - childSize.width - _kToolbarScreenPadding;
 
     if (y < _kToolbarScreenPadding)
       y = _kToolbarScreenPadding;
-    else if (y + childSize.height > screenSize.height - _kToolbarScreenPadding)
-      y = screenSize.height - childSize.height - _kToolbarScreenPadding;
+    else if (y + childSize.height > screenSize.height - _kToolbarScreenPadding) y = screenSize.height - childSize.height - _kToolbarScreenPadding;
 
     return Offset(x, y);
   }
@@ -112,14 +112,14 @@ class _TextSelectionToolbarLayout extends SingleChildLayoutDelegate {
 
 /// Draws a single text selection handle which points up and to the left.
 class _TextSelectionHandlePainter extends CustomPainter {
-  _TextSelectionHandlePainter({ this.color });
+  _TextSelectionHandlePainter({this.color});
 
   final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()..color = color;
-    final double radius = size.width/2.0;
+    final double radius = size.width / 2.0;
     canvas.drawCircle(Offset(radius, radius), radius, paint);
     canvas.drawRect(Rect.fromLTWH(0.0, 0.0, radius, radius), paint);
   }
@@ -151,10 +151,7 @@ class _MaterialTextSelectionControls extends TextSelectionControls {
     // The toolbar should appear below the TextField
     // when there is not enough space above the TextField to show it.
     final TextSelectionPoint startTextSelectionPoint = endpoints[0];
-    final double toolbarHeightNeeded = MediaQuery.of(context).padding.top
-      + _kToolbarScreenPadding
-      + _kToolbarHeight
-      + _kToolbarContentDistance;
+    final double toolbarHeightNeeded = MediaQuery.of(context).padding.top + _kToolbarScreenPadding + _kToolbarHeight + _kToolbarContentDistance;
     final double availableHeight = globalEditableRegion.top + endpoints.first.point.dy - textLineHeight;
     final bool fitsAbove = toolbarHeightNeeded <= availableHeight;
     final double y = fitsAbove
@@ -187,9 +184,7 @@ class _MaterialTextSelectionControls extends TextSelectionControls {
       width: _kHandleSize,
       height: _kHandleSize,
       child: CustomPaint(
-        painter: _TextSelectionHandlePainter(
-          color: Theme.of(context).textSelectionHandleColor
-        ),
+        painter: _TextSelectionHandlePainter(color: Theme.of(context).textSelectionHandleColor),
       ),
     );
 
@@ -234,9 +229,7 @@ class _MaterialTextSelectionControls extends TextSelectionControls {
     // Android allows SelectAll when selection is not collapsed, unless
     // everything has already been selected.
     final TextEditingValue value = delegate.textEditingValue;
-    return delegate.selectAllEnabled &&
-           value.text.isNotEmpty &&
-           !(value.selection.start == 0 && value.selection.end == value.text.length);
+    return delegate.selectAllEnabled && value.text.isNotEmpty && !(value.selection.start == 0 && value.selection.end == value.text.length);
   }
 }
 
