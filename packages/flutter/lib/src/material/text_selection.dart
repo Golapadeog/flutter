@@ -53,11 +53,13 @@ class _TextSelectionToolbar extends StatelessWidget {
       return Container(width: 0.0, height: 0.0);
     }
 
+    final List<Widget> flexibleItems = items.map((Widget widget) => Flexible(child: FittedBox(child: widget))).toList();
+
     return Material(
       elevation: 1.0,
       child: Container(
         height: _kToolbarHeight,
-        child: Row(mainAxisSize: MainAxisSize.min, children: items),
+        child: Row(mainAxisSize: MainAxisSize.min, children: flexibleItems),
       ),
     );
   }
